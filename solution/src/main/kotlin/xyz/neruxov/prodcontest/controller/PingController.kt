@@ -1,4 +1,4 @@
-package ru.prodcontest.kotlinprodcontesttemplate
+package xyz.neruxov.prodcontest.controller
 
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping

@@ -1,11 +1,11 @@
-package ru.prodcontest.kotlinprodcontesttemplate
+package xyz.neruxov.prodcontest
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class KotlinProdcontestTemplateApplication
+class ProdcontestApplication
 
 fun main(args: Array<String>) {
-    runApplication<KotlinProdcontestTemplateApplication>(*args)
+    runApplication<ProdcontestApplication>(*args)
 }
