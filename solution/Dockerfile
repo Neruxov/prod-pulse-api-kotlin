@@ -21,4 +21,4 @@ COPY --from=build ${DEPENDENCY}/BOOT-INF/classes /app
 
 ENV SERVER_PORT=8080
 
-CMD ["sh", "-c", "exec java -Dserver.port=$SERVER_PORT -Djava.net.preferIPv4Stack=true -Djava.net.preferIPv6Addresses=false -cp app:app/lib/* xyz.neruxov.prodcontest.ProdcontestApplicationKt"]
+CMD ["sh", "-c", "exec java -Dserver.port=$SERVER_PORT -cp app:app/lib/* xyz.neruxov.prodcontest.ProdcontestApplicationKt"]
