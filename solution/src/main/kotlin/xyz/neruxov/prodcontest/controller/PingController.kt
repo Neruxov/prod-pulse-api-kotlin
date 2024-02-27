@@ -12,8 +12,6 @@ class PingController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    fun ping() {
-
-    }
+    fun ping() { }
 
 }
