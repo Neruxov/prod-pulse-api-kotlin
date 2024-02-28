@@ -1,11 +1,15 @@
-package xyz.neruxov.prodcontest.data.countries.model
+package ru.prodcontest.data.countries.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 
 @Entity
-@Table(name = "countries")
+@Table(name = "countries", uniqueConstraints = [
+    UniqueConstraint(columnNames = ["alpha2"]),
+    UniqueConstraint(columnNames = ["alpha3"])
+])
 data class Country(
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
@@ -22,7 +26,8 @@ data class Country(
     val alpha3: String,
 
     @Column(name = "region", nullable = true)
-    val region: String,
+    val region: String?,
+
 ) {
 
     constructor() : this(0, "", "", "", "")
