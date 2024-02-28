@@ -80,18 +80,8 @@ class AuthService(
 
         val savedUser = userRepository.save(user)
 
-        val response = mutableMapOf<String, Any>(
-            "login" to savedUser.login,
-            "email" to savedUser.email,
-            "countryCode" to savedUser.country.alpha2,
-            "isPublic" to savedUser.isPublic
-        )
-
-        if (savedUser.phone != null) response["phone"] = savedUser.phone
-        if (savedUser.image != null) response["image"] = savedUser.image
-
         return RegisterResponse(
-            response
+            savedUser.toMap()
         )
     }
 

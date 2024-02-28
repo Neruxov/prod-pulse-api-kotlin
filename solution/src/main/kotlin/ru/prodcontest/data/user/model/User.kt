@@ -48,6 +48,20 @@ data class User(
 
     constructor() : this(0, "", "", "", Country(), false, "", "")
 
+    fun toMap(): Map<String, Any> {
+        val map = mutableMapOf<String, Any>(
+            "login" to this.login,
+            "email" to this.email,
+            "countryCode" to this.country.alpha2,
+            "isPublic" to this.isPublic
+        )
+
+        if (this.phone != null) map["phone"] = this.phone
+        if (this.image != null) map["image"] = this.image
+
+        return map
+    }
+
     override fun getPassword(): String {
         return _password
     }
