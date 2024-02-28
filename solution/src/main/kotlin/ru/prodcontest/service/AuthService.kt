@@ -15,6 +15,7 @@ import ru.prodcontest.data.user.request.SignInRequest
 import ru.prodcontest.data.user.response.RegisterResponse
 import ru.prodcontest.data.user.response.SignInResponse
 import ru.prodcontest.exception.type.StatusCodeException
+import ru.prodcontest.util.PasswordUtil
 
 /**
  * @author <a href="https://github.com/Neruxov">Neruxov</a>
@@ -50,23 +51,31 @@ class AuthService(
 
     fun register(body: RegisterRequest): Any {
         if (userRepository.existsByLogin(body.login) ||
-            userRepository.existsByEmail(body.email) ||
-            (body.phone != null && userRepository.existsByPhone(body.phone))) {
+             userRepository.existsByEmail(body.email) ||
+             (body.phone != null && userRepository.existsByPhone(body.phone))) {
             throw StatusCodeException(409, "User with this registration information already exists")
         }
 
-        if (body.login.length > 30) throw StatusCodeException(400, "Login is too long")
-        if (!body.login.matches(Regex("^[a-zA-Z0-9-]+\$"))) throw StatusCodeException(400, "Login must match [a-zA-Z0-9-]+")
+        if (body.login.length > 30)
+            throw StatusCodeException(400, "Login is too long")
+        if (!body.login.matches(Regex("^[a-zA-Z0-9-]+\$")))
+            throw StatusCodeException(400, "Login must match [a-zA-Z0-9-]+")
 
-        if (body.email.length > 50) throw StatusCodeException(400, "Email is too long")
+        if (body.email.length > 50)
+            throw StatusCodeException(400, "Email is too long")
 
-        if (body.password.length < 6 || body.password.length > 100) throw StatusCodeException(400, "Password must be between 6 and 100 characters")
+        if (!PasswordUtil.meetsRequirements(body.password))
+            throw StatusCodeException(400, "Password must be between 6 and 100 characters, contain at least one digit, one lowercase letter, and one uppercase letter.")
 
-        if (body.countryCode.length != 2) throw StatusCodeException(400, "Country code must be 2 characters long")
-        if (!body.countryCode.matches(Regex("^[a-zA-Z]{2}\$"))) throw StatusCodeException(400, "Country code must match [a-zA-Z]{2}")
+        if (body.countryCode.length != 2)
+            throw StatusCodeException(400, "Country code must be 2 characters long")
+        if (!body.countryCode.matches(Regex("^[a-zA-Z]{2}\$")))
+            throw StatusCodeException(400, "Country code must match [a-zA-Z]{2}")
 
-        if (body.phone != null && !body.phone.matches(Regex("^\\+\\d+\$"))) throw StatusCodeException(400, "Phone must match ^\\+\\d+\$")
-        if (body.image != null && body.image.length > 200) throw StatusCodeException(400, "Image URL is too long")
+        if (body.phone != null && !body.phone.matches(Regex("^\\+\\d+\$")))
+            throw StatusCodeException(400, "Phone must match ^\\+\\d+\$")
+        if (body.image != null && body.image.length > 200)
+            throw StatusCodeException(400, "Image URL is too long")
 
         val user = User(
             0,

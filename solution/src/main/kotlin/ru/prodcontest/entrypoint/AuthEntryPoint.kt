@@ -23,7 +23,6 @@ class AuthEntryPoint : AuthenticationEntryPoint {
             response.contentType = "application/json"
             response.writer?.write("{\"reason\": \"Invalid credentials\"}")
         } else if (response?.status == 400) {
-            response.status = 400
             response.contentType = "application/json"
             response.writer?.write("{\"reason\": \"Invalid body\"}")
         }

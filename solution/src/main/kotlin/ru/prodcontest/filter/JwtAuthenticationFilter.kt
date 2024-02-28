@@ -46,6 +46,7 @@ class JwtAuthenticationFilter(
             response.writer.write("{\"reason\": \"Token expired\"}")
             return
         }
+
         if (login != null && SecurityContextHolder.getContext().authentication == null) {
             val userDetails = userDetailsService.loadUserByUsername(login)
             val isTokenValid = tokenRepository.findByToken(jwt)

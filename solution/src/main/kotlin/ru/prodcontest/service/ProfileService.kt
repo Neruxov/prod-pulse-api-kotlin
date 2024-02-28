@@ -1,6 +1,7 @@
 package ru.prodcontest.service
 
 import org.springframework.stereotype.Service
+import ru.prodcontest.data.friend.repo.FriendRepository
 import ru.prodcontest.data.user.model.User
 import ru.prodcontest.data.user.repo.UserRepository
 import ru.prodcontest.exception.type.StatusCodeException
@@ -10,7 +11,8 @@ import ru.prodcontest.exception.type.StatusCodeException
  */
 @Service
 class ProfileService(
-    val userRepository: UserRepository
+    val userRepository: UserRepository,
+    val friendsRepository: FriendRepository
 ) {
 
     fun getProfile(user: User, login: String): Any {
@@ -20,7 +22,7 @@ class ProfileService(
         val profile = userRepository.findByLogin(login)
             .orElseThrow { StatusCodeException(403, "User not found") }
 
-        if (!profile.isPublic)
+        if (!profile.isPublic && !friendsRepository.existsByUserLoginAndFriendLogin(login, user.login))
             throw StatusCodeException(403, "User is private")
 
         return profile.toMap()

@@ -8,6 +8,7 @@ import ru.prodcontest.data.user.repo.UserRepository
 import ru.prodcontest.data.user.request.PasswordUpdateRequest
 import ru.prodcontest.data.user.request.UpdateRequest
 import ru.prodcontest.exception.type.StatusCodeException
+import ru.prodcontest.util.PasswordUtil
 
 /**
  * @author <a href="https://github.com/Neruxov">Neruxov</a>
@@ -23,19 +24,28 @@ class UserService(
     fun updateMyProfile(user: User, request: UpdateRequest): Any {
         user.apply {
             request.countryCode?.let {
-                val countryNew = countryRepository.findByAlpha2OrderByAlpha2(it).orElseThrow { StatusCodeException(404, "Country not found") }
+                val countryNew = countryRepository.findByAlpha2OrderByAlpha2(it)
+                    .orElseThrow { StatusCodeException(404, "Country not found") }
+
                 country = countryNew
             }
 
             request.isPublic?.let { isPublic = it }
 
             request.phone?.let {
-                if (!it.matches(Regex("^\\+\\d+"))) throw StatusCodeException(400, "Phone must match ^\\+\\d+")
+                if (!it.matches(Regex("^\\+\\d+")))
+                    throw StatusCodeException(400, "Phone must match ^\\+\\d+")
+
+                if (userRepository.existsByPhone(it))
+                    throw StatusCodeException(409, "User with this phone already exists")
+
                 phone = it
             }
 
             request.image?.let {
-                if (it.length > 200) throw StatusCodeException(400, "Image URL is too long")
+                if (it.length > 200)
+                    throw StatusCodeException(400, "Image URL is too long")
+
                 image = it
             }
         }
@@ -45,7 +55,8 @@ class UserService(
     }
 
     fun updatePassword(user: User, body: PasswordUpdateRequest): Any {
-        if (body.newPassword.length < 6 || body.newPassword.length > 100) throw StatusCodeException(400, "Password must be between 6 and 100 characters")
+        if (!PasswordUtil.meetsRequirements(body.newPassword))
+            throw StatusCodeException(400, "Password must be between 6 and 100 characters, contain at least one digit, one lowercase letter, and one uppercase letter.")
 
         if (!passwordEncoder.matches(body.oldPassword, user.password))
             throw StatusCodeException(403, "Old password is incorrect")
