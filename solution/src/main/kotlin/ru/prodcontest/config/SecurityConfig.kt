@@ -2,21 +2,13 @@ package ru.prodcontest.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.AuthenticationProvider
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
-import org.springframework.security.core.userdetails.UserDetailsService
-import org.springframework.security.core.userdetails.UsernameNotFoundException
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.security.web.AuthenticationEntryPoint
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
-import ru.prodcontest.data.user.repo.UserRepository
+import ru.prodcontest.entrypoint.AuthEntryPoint
 import ru.prodcontest.filter.JwtAuthenticationFilter
 import kotlin.jvm.Throws
 
@@ -27,7 +19,8 @@ import kotlin.jvm.Throws
 @EnableWebSecurity
 class SecurityConfig(
     val authenticationProvider: AuthenticationProvider,
-    val jwtAuthenticationFilter: JwtAuthenticationFilter
+    val jwtAuthenticationFilter: JwtAuthenticationFilter,
+    val authenticationEntryPoint: AuthEntryPoint
 ) {
 
     @Bean
@@ -43,7 +36,7 @@ class SecurityConfig(
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authenticationProvider(authenticationProvider)
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
-//            .exceptionHandling { it.authenticationEntryPoint(authenticationEntryPoint) }
+            .exceptionHandling { it.authenticationEntryPoint(authenticationEntryPoint) }
         return http.build()
     }
 
