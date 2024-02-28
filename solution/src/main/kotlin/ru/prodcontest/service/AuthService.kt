@@ -79,9 +79,6 @@ class AuthService(
         )
 
         val savedUser = userRepository.save(user)
-        val jwtToken = jwtService.generateToken(savedUser)
-
-        saveUserToken(savedUser, jwtToken)
 
         val response = mutableMapOf<String, Any>(
             "login" to savedUser.login,
