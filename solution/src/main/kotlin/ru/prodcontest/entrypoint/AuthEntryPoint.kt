@@ -18,9 +18,15 @@ class AuthEntryPoint : AuthenticationEntryPoint {
         response: HttpServletResponse?,
         authException: AuthenticationException?
     ) {
-        response?.status = 401
-        response?.contentType = "application/json"
-        response?.writer?.write("{\"reason\": \"Invalid credentials\"}")
+        if (response?.status == 403) {
+            response.status = 401
+            response.contentType = "application/json"
+            response.writer?.write("{\"reason\": \"Invalid credentials\"}")
+        } else if (response?.status == 400) {
+            response.status = 400
+            response.contentType = "application/json"
+            response.writer?.write("{\"reason\": \"Invalid body\"}")
+        }
     }
 
 }
