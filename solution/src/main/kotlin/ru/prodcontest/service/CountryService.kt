@@ -1,8 +1,7 @@
 package ru.prodcontest.service
 
-import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
-import ru.prodcontest.data.countries.repo.CountryRepository
+import ru.prodcontest.data.country.repo.CountryRepository
 import ru.prodcontest.exception.type.StatusCodeException
 
 /**
@@ -14,7 +13,7 @@ class CountryService(
 ) {
 
     fun getAllCountries(region: List<String>?): Any {
-        return if (region != null) countryRepository.findByRegionIn(region)
+        return if (region != null) countryRepository.findByRegionInOrderByAlpha2(region)
         else countryRepository.findAll()
     }
 
@@ -22,7 +21,7 @@ class CountryService(
         if (alpha2.length != 2)
             throw StatusCodeException(404, "Country not found")
 
-        return countryRepository.findByAlpha2(alpha2).orElseThrow { IllegalArgumentException("Country not found") }
+        return countryRepository.findByAlpha2OrderByAlpha2(alpha2).orElseThrow { IllegalArgumentException("Country not found") }
     }
 
 }

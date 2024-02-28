@@ -4,7 +4,7 @@ import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
-import ru.prodcontest.data.countries.repo.CountryRepository
+import ru.prodcontest.data.country.repo.CountryRepository
 import ru.prodcontest.data.token.enums.TokenType
 import ru.prodcontest.data.token.model.Token
 import ru.prodcontest.data.token.repo.TokenRepository
@@ -73,7 +73,7 @@ class AuthService(
             body.login,
             body.email,
             passwordEncoder.encode(body.password),
-            countryRepository.findByAlpha2(body.countryCode)
+            countryRepository.findByAlpha2OrderByAlpha2(body.countryCode)
                 .orElseThrow { StatusCodeException(400, "Invalid country code") },
             body.isPublic,
             body.phone,

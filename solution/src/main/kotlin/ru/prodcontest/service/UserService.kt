@@ -2,7 +2,7 @@ package ru.prodcontest.service
 
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
-import ru.prodcontest.data.countries.repo.CountryRepository
+import ru.prodcontest.data.country.repo.CountryRepository
 import ru.prodcontest.data.user.model.User
 import ru.prodcontest.data.user.repo.UserRepository
 import ru.prodcontest.data.user.request.PasswordUpdateRequest
@@ -23,7 +23,7 @@ class UserService(
     fun updateMyProfile(user: User, request: UpdateRequest): Any {
         user.apply {
             request.countryCode?.let {
-                val countryNew = countryRepository.findByAlpha2(it).orElseThrow { StatusCodeException(404, "Country not found") }
+                val countryNew = countryRepository.findByAlpha2OrderByAlpha2(it).orElseThrow { StatusCodeException(404, "Country not found") }
                 country = countryNew
             }
 

@@ -1,4 +1,4 @@
-package ru.prodcontest.data.countries.model
+package ru.prodcontest.data.country.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*

@@ -5,7 +5,8 @@ import jakarta.persistence.*
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
-import ru.prodcontest.data.countries.model.Country
+import ru.prodcontest.data.country.model.Country
+import ru.prodcontest.data.friend.model.Friend
 import ru.prodcontest.data.user.enums.Role
 
 @Entity
