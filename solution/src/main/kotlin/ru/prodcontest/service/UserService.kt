@@ -45,6 +45,8 @@ class UserService(
     }
 
     fun updatePassword(user: User, body: PasswordUpdateRequest): Any {
+        if (body.newPassword.length < 6 || body.newPassword.length > 100) throw StatusCodeException(400, "Password must be between 6 and 100 characters")
+
         if (!passwordEncoder.matches(body.oldPassword, user.password))
             throw StatusCodeException(403, "Old password is incorrect")
 
