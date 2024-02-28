@@ -1,10 +1,9 @@
 package ru.prodcontest.controller
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.security.core.userdetails.UserDetails
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
+import ru.prodcontest.data.user.model.User
+import ru.prodcontest.data.user.request.UpdateRequest
 import ru.prodcontest.service.ProfileService
 
 /**
@@ -17,6 +16,18 @@ class ProfileController(
 ) {
 
     @GetMapping("/me/profile")
-    fun getMyProfile(@AuthenticationPrincipal userDetails: UserDetails) = profileService.getMyProfile(userDetails)
+    fun getMyProfile(@AuthenticationPrincipal user: User) = user.toMap()
+
+    @PatchMapping("/me/profile")
+    fun updateMyProfile(
+        @AuthenticationPrincipal user: User,
+        @RequestBody request: UpdateRequest
+    ) = profileService.updateMyProfile(user, request)
+
+    @GetMapping("/profiles/{login}")
+    fun getProfile(
+        @AuthenticationPrincipal user: User,
+        @PathVariable login: String
+    ) = profileService.getProfile(user, login)
 
 }

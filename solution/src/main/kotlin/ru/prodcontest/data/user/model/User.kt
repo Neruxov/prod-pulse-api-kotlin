@@ -29,16 +29,16 @@ data class User(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "country_code", referencedColumnName = "alpha2")
-    val country: Country,
+    var country: Country,
 
     @Column(name = "is_public")
-    val isPublic: Boolean,
+    var isPublic: Boolean,
 
     @Column(name = "phone", nullable = true)
-    val phone: String?,
+    var phone: String?,
 
     @Column(name = "image", nullable = true)
-    val image: String?,
+    var image: String?,
 
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
@@ -56,8 +56,8 @@ data class User(
             "isPublic" to this.isPublic
         )
 
-        if (this.phone != null) map["phone"] = this.phone
-        if (this.image != null) map["image"] = this.image
+        if (this.phone != null) map["phone"] = this.phone!!
+        if (this.image != null) map["image"] = this.image!!
 
         return map
     }

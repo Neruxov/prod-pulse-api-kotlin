@@ -12,11 +12,9 @@ class CountryController(
 ) {
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
     fun getAllCountries(@RequestParam region: List<String>?) = countryService.getAllCountries(region)
 
     @GetMapping("/{alpha2}")
-    @ResponseStatus(HttpStatus.OK)
     fun getCountryById(@PathVariable alpha2: String) = countryService.getCountryByAlpha2(alpha2)
 
 }
