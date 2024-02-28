@@ -19,7 +19,7 @@ class FriendService(
 ) {
 
     fun addFriend(user: User, body: FriendRequest): Any {
-        val userFriends = friendRepository.findByUserLoginOrderByAddedAt(user.login)
+        val userFriends = friendRepository.findByUserLoginOrderByAddedAtDesc(user.login)
         if (user.login == body.login || userFriends.any { it.friend.login == body.login }) {
             return mapOf("status" to "ok")
         }
@@ -34,7 +34,7 @@ class FriendService(
     }
 
     fun removeFriend(user: User, body: FriendRequest): Any {
-        val userFriends = friendRepository.findByUserLoginOrderByAddedAt(user.login)
+        val userFriends = friendRepository.findByUserLoginOrderByAddedAtDesc(user.login)
         val friend = userFriends.find { it.friend.login == body.login }
             ?: return mapOf("status" to "ok")
 
@@ -49,7 +49,7 @@ class FriendService(
         if (offset < 0)
             throw StatusCodeException(400, "Offset must be greater than 0")
 
-        val userFriends = friendRepository.findByUserLoginOrderByAddedAt(user.login).reversed()
+        val userFriends = friendRepository.findByUserLoginOrderByAddedAtDesc(user.login)
         if (offset >= userFriends.size)
             return emptyList<Map<String, Any>>()
 

@@ -26,7 +26,7 @@ data class Reaction(
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type")
-    val type: ReactionType
+    var type: ReactionType
 
 ) {
 

@@ -1,12 +1,7 @@
 package ru.prodcontest.data.post.model
 
-import com.fasterxml.jackson.annotation.JsonIgnore
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.Id
-import jakarta.persistence.OneToMany
-import jakarta.persistence.Table
+import jakarta.persistence.*
+import ru.prodcontest.data.user.model.User
 import java.util.Date
 import java.util.UUID
 
@@ -25,17 +20,18 @@ data class Post(
     @OneToMany(mappedBy = "post")
     val tags: List<Tag>,
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    val user: User,
+
     @Column(name = "created_at")
     val createdAt: Date = Date(),
 
-    @Column(name = "likes_count")
-    var likesCount: Int = 0,
-
-    @Column(name = "dislikes_count")
-    var dislikesCount: Int = 0
+    @OneToMany(mappedBy = "post")
+    val reactions: List<Reaction> = emptyList()
 
 ) {
 
-    constructor() : this(UUID.randomUUID(), "", emptyList())
+    constructor() : this(UUID.randomUUID(), "", emptyList(), User(), Date(), emptyList())
 
 }
