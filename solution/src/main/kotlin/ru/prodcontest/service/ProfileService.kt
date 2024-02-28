@@ -13,33 +13,8 @@ import ru.prodcontest.exception.type.StatusCodeException
  */
 @Service
 class ProfileService(
-    val userRepository: UserRepository,
-    val countryRepository: CountryRepository
+    val userRepository: UserRepository
 ) {
-
-    fun updateMyProfile(user: User, request: UpdateRequest): Any {
-        user.apply {
-            request.countryCode?.let {
-                val countryNew = countryRepository.findByAlpha2(it).orElseThrow { StatusCodeException(404, "Country not found") }
-                country = countryNew
-            }
-
-            request.isPublic?.let { isPublic = it }
-
-            request.phone?.let {
-                if (!it.matches(Regex("^\\+\\d+"))) throw StatusCodeException(400, "Phone must match ^\\+\\d+")
-                phone = it
-            }
-
-            request.image?.let {
-                if (it.length > 200) throw StatusCodeException(400, "Image URL is too long")
-                image = it
-            }
-        }
-
-        userRepository.save(user)
-        return user.toMap()
-    }
 
     fun getProfile(user: User, login: String): Any {
         if (login == user.login)

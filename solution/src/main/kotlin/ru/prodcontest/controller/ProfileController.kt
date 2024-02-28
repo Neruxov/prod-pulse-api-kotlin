@@ -10,21 +10,12 @@ import ru.prodcontest.service.ProfileService
  * @author <a href="https://github.com/Neruxov">Neruxov</a>
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/profiles")
 class ProfileController(
     val profileService: ProfileService
 ) {
 
-    @GetMapping("/me/profile")
-    fun getMyProfile(@AuthenticationPrincipal user: User) = user.toMap()
-
-    @PatchMapping("/me/profile")
-    fun updateMyProfile(
-        @AuthenticationPrincipal user: User,
-        @RequestBody request: UpdateRequest
-    ) = profileService.updateMyProfile(user, request)
-
-    @GetMapping("/profiles/{login}")
+    @GetMapping("/{login}")
     fun getProfile(
         @AuthenticationPrincipal user: User,
         @PathVariable login: String

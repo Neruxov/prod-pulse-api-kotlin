@@ -1,5 +1,6 @@
 package ru.prodcontest.filter
 
+import io.jsonwebtoken.ExpiredJwtException
 import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
@@ -35,8 +36,16 @@ class JwtAuthenticationFilter(
             return filterChain.doFilter(request, response)
 
         val jwt = authHeader.substring(7)
-        val login = jwtService.extractUsername(jwt)
 
+        val login: String?
+        try {
+            login = jwtService.extractUsername(jwt)
+        } catch (e: ExpiredJwtException) {
+            response.status = 401
+            response.contentType = "application/json"
+            response.writer.write("{\"reason\": \"Token expired\"}")
+            return
+        }
         if (login != null && SecurityContextHolder.getContext().authentication == null) {
             val userDetails = userDetailsService.loadUserByUsername(login)
             val isTokenValid = tokenRepository.findByToken(jwt)
@@ -47,6 +56,11 @@ class JwtAuthenticationFilter(
                 val authToken = UsernamePasswordAuthenticationToken(userDetails, null, userDetails.authorities)
                 authToken.details = WebAuthenticationDetailsSource().buildDetails(request)
                 SecurityContextHolder.getContext().authentication = authToken
+            } else {
+                response.status = 401
+                response.contentType = "application/json"
+                response.writer.write("{\"reason\": \"Invalid token\"}")
+                return
             }
         }
 

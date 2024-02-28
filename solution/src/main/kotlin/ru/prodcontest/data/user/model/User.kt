@@ -25,7 +25,7 @@ data class User(
 
     @JsonIgnore
     @Column(name = "password")
-    val _password: String,
+    var _password: String,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "country_code", referencedColumnName = "alpha2")

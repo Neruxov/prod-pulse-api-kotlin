@@ -30,9 +30,11 @@ class AuthService(
 ) {
 
     fun signIn(request: SignInRequest): Any {
-        println(request.login)
         val user = userRepository.findByLogin(request.login)
             .orElseThrow { StatusCodeException(401, "User not found") }
+
+        if (!passwordEncoder.matches(request.password, user.password))
+            throw StatusCodeException(401, "Password is incorrect")
 
         authenticationManager.authenticate(
             UsernamePasswordAuthenticationToken(request.login, request.password)
