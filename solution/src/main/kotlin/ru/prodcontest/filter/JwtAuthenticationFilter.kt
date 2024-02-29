@@ -1,6 +1,7 @@
 package ru.prodcontest.filter
 
 import io.jsonwebtoken.ExpiredJwtException
+import io.jsonwebtoken.MalformedJwtException
 import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
@@ -49,6 +50,12 @@ class JwtAuthenticationFilter(
             response.status = 401
             response.contentType = "application/json"
             response.writer.write("{\"reason\": \"Token expired\"}")
+            return
+        } catch (e: MalformedJwtException) {
+            println(e)
+            response.status = 401
+            response.contentType = "application/json"
+            response.writer.write("{\"reason\": \"Invalid token\"}")
             return
         }
 
