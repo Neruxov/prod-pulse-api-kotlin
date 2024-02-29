@@ -14,7 +14,7 @@ class CountryService(
 
     fun getAllCountries(region: List<String>?): Any {
         return if (region != null) countryRepository.findByRegionInOrderByAlpha2(region)
-        else countryRepository.findAll()
+        else countryRepository.findAllByOrderByAlpha2()
     }
 
     fun getCountryByAlpha2(alpha2: String): Any {

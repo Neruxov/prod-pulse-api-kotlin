@@ -13,4 +13,6 @@ interface CountryRepository : JpaRepository<Country, Long> {
 
     fun findByRegionInOrderByAlpha2(region: List<String>): List<Country>
 
+    fun findAllByOrderByAlpha2(): List<Country>
+
 }

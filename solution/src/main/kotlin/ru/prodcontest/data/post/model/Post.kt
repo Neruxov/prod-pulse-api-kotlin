@@ -17,7 +17,7 @@ data class Post(
     @Column(name = "content")
     val content: String,
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
     val tags: List<Tag>,
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -27,7 +27,7 @@ data class Post(
     @Column(name = "created_at")
     val createdAt: Date = Date(),
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
     val reactions: List<Reaction> = emptyList()
 
 ) {

@@ -23,7 +23,7 @@ class JpaConfig {
         val properties = Properties()
         properties.setProperty("hibernate.hbm2ddl.auto", "update")
         properties.setProperty("hibernate.show_sql", "true")
-        properties.setProperty("hibernate.format_sql", "true")
+//        properties.setProperty("hibernate.format_sql", "true")
         entityManagerFactoryBean.setJpaProperties(properties)
 
         return entityManagerFactoryBean
