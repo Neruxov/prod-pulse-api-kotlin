@@ -45,6 +45,7 @@ class JwtAuthenticationFilter(
         try {
             login = jwtService.extractUsername(jwt)
         } catch (e: ExpiredJwtException) {
+            println(e)
             response.status = 401
             response.contentType = "application/json"
             response.writer.write("{\"reason\": \"Token expired\"}")

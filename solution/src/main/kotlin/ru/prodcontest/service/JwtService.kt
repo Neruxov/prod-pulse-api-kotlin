@@ -22,7 +22,7 @@ import kotlin.collections.HashMap
 class JwtService {
 
     private val secretKey: String = "245c6b5f623630436d5b70693c5f4d5a5c46673850292e257571502657"
-    private val jwtExpiration: Long = 60 * 60
+    private val jwtExpiration: Long = 60 * 60 * 1000
 
     fun extractUsername(token: String?): String? {
         return extractClaim<String>(token, Claims::getSubject)
