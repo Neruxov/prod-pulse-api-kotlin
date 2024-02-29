@@ -1,5 +1,6 @@
 package ru.prodcontest.config
 
+import org.springframework.cache.annotation.EnableCaching
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
@@ -16,6 +17,7 @@ import ru.prodcontest.data.user.repo.UserRepository
  * @author <a href="https://github.com/Neruxov">Neruxov</a>
  */
 @Configuration
+@EnableCaching
 class ApplicationConfig(
     val userRepository: UserRepository
 ) {

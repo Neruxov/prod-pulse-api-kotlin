@@ -58,7 +58,6 @@ class PostsService(
         val post = postRepository.findById(id)
             .orElseThrow { StatusCodeException(404, "Post not found") }
 
-        println(post.user.login + " " + user.login)
         if (post.user != user && !post.user.isPublic && !friendRepository.existsByUserLoginAndFriendLogin(post.user.login, user.login))
             throw StatusCodeException(404, "This user's profile is private")
 
@@ -113,7 +112,14 @@ class PostsService(
         if (offset >= posts.size)
             return emptyList<Map<String, Any>>()
 
+        if (limit < 0 || limit > 50)
+            throw StatusCodeException(400, "Limit must be between 0 and 50")
+
+        if (offset < 0)
+            throw StatusCodeException(400, "Offset must be greater than 0")
+
         val feed = posts.subList(offset, offset + limit.coerceAtMost(posts.size))
+
         return feed.map { mapOf(
             "id" to it.id,
             "content" to it.content,
@@ -135,6 +141,12 @@ class PostsService(
         val posts = postRepository.findByUserLoginOrderByCreatedAtDesc(targetUser.login)
         if (offset >= posts.size)
             return emptyList<Map<String, Any>>()
+
+        if (limit < 0 || limit > 50)
+            throw StatusCodeException(400, "Limit must be between 0 and 50")
+
+        if (offset < 0)
+            throw StatusCodeException(400, "Offset must be greater than 0")
 
         val feed = posts.subList(offset, offset + limit.coerceAtMost(posts.size))
         return feed.map { mapOf(

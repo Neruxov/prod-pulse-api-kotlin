@@ -23,15 +23,12 @@ data class Token(
     @Column(name = "revoked")
     var revoked: Boolean,
 
-    @Column(name = "expired")
-    val expired: Boolean,
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     val user: User,
 
 ) {
 
-    constructor() : this(0, "", TokenType.BEARER, false, false, User())
+    constructor() : this(0, "", TokenType.BEARER, false, User())
 
 }

@@ -97,7 +97,7 @@ class AuthService(
     }
 
     fun revokeUserTokens(user: User) {
-        val validTokens = tokenRepository.findAllValidTokensByUserId(user.id)
+        val validTokens = tokenRepository.findByUserIdAndRevokedFalse(user.id)
         if (validTokens.isNotEmpty()) {
             validTokens.forEach { it.revoked = true }
             tokenRepository.saveAll(validTokens)
@@ -105,7 +105,7 @@ class AuthService(
     }
 
     fun saveUserToken(user: User, token: String) {
-        val newToken = Token(0, token, TokenType.BEARER, revoked = false, expired = false, user = user)
+        val newToken = Token(0, token, TokenType.BEARER, revoked = false, user = user)
         tokenRepository.save(newToken)
     }
 

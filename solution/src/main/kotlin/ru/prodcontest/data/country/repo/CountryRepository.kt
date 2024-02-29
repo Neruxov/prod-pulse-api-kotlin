@@ -11,7 +11,7 @@ interface CountryRepository : JpaRepository<Country, Long> {
 
     fun findByAlpha2OrderByAlpha2(alpha2: String): Optional<Country>
 
-    fun findByRegionInOrderByAlpha2(region: List<String>): List<Country>
+    fun findByRegionInIgnoreCaseOrderByAlpha2(region: List<String>): List<Country>
 
     fun findAllByOrderByAlpha2(): List<Country>
 

@@ -23,15 +23,23 @@ class SecurityConfig(
     val authenticationEntryPoint: AuthEntryPoint
 ) {
 
+    companion object {
+
+        val WHITELISTED_URLS = arrayOf(
+            "/api/auth/**",
+            "/api/ping/**",
+            "/api/countries/**"
+        )
+
+    }
+
     @Bean
     @Throws(Exception::class)
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http.csrf { it.disable() }
             .authorizeHttpRequests {
-                it.requestMatchers("api/auth/**").permitAll()
-                  .requestMatchers("api/ping/**").permitAll()
-                  .requestMatchers("api/countries/**").permitAll()
-                  .anyRequest().authenticated()
+                WHITELISTED_URLS.forEach { url -> it.requestMatchers(url).permitAll() }
+                it.anyRequest().authenticated()
             }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authenticationProvider(authenticationProvider)

@@ -1,6 +1,7 @@
 package ru.prodcontest.service
 
 import org.springframework.stereotype.Service
+import ru.prodcontest.data.country.enums.Region
 import ru.prodcontest.data.country.repo.CountryRepository
 import ru.prodcontest.exception.type.StatusCodeException
 
@@ -12,8 +13,8 @@ class CountryService(
     val countryRepository: CountryRepository,
 ) {
 
-    fun getAllCountries(region: List<String>?): Any {
-        return if (region != null) countryRepository.findByRegionInOrderByAlpha2(region)
+    fun getAllCountries(region: List<Region>?): Any {
+        return if (region != null) countryRepository.findByRegionInIgnoreCaseOrderByAlpha2(region.map { it.name })
         else countryRepository.findAllByOrderByAlpha2()
     }
 

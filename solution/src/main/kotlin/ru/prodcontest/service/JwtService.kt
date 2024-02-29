@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Service
 import java.security.Key
+import java.time.LocalDateTime
+import java.time.ZonedDateTime
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -20,7 +22,7 @@ import kotlin.collections.HashMap
 class JwtService {
 
     private val secretKey: String = "245c6b5f623630436d5b70693c5f4d5a5c46673850292e257571502657"
-    private val jwtExpiration: Long = 60 * 60 * 1000
+    private val jwtExpiration: Long = 60 * 60
 
     fun extractUsername(token: String?): String? {
         return extractClaim<String>(token, Claims::getSubject)
@@ -77,7 +79,6 @@ class JwtService {
     private fun extractAllClaims(token: String?): Claims {
         return Jwts
             .parserBuilder()
-            .setClock { Date() }
             .setSigningKey(getSignInKey())
             .build()
             .parseClaimsJws(token)

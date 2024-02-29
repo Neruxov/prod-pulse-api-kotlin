@@ -12,7 +12,6 @@ interface TokenRepository : JpaRepository<Token, Long> {
 
     fun findByToken(token: String): Optional<Token>
 
-    @Query("SELECT t FROM Token t WHERE t.user.id = :userId AND t.expired = false AND t.revoked = false")
-    fun findAllValidTokensByUserId(userId: Long): List<Token>
+    fun findByUserIdAndRevokedFalse(userId: Long): List<Token>
 
 }

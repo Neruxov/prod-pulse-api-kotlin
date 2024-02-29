@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
+import ru.prodcontest.config.SecurityConfig
 import ru.prodcontest.data.token.repo.TokenRepository
 import ru.prodcontest.service.JwtService
 import java.io.IOException
@@ -31,6 +32,9 @@ class JwtAuthenticationFilter(
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
+        if (SecurityConfig.WHITELISTED_URLS.any { request.requestURI.startsWith(it.substringBefore("/**")) })
+            return filterChain.doFilter(request, response)
+
         val authHeader = request.getHeader("Authorization")
         if (authHeader == null || !authHeader.startsWith("Bearer "))
             return filterChain.doFilter(request, response)
@@ -50,7 +54,7 @@ class JwtAuthenticationFilter(
         if (login != null && SecurityContextHolder.getContext().authentication == null) {
             val userDetails = userDetailsService.loadUserByUsername(login)
             val isTokenValid = tokenRepository.findByToken(jwt)
-                .map { t -> !t.expired && !t.revoked }
+                .map { t -> !t.revoked }
                 .orElse(false)
 
             if (jwtService.isTokenValid(jwt, userDetails) && isTokenValid) {
