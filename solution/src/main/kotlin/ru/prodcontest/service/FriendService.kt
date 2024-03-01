@@ -54,10 +54,12 @@ class FriendService(
             return emptyList<Map<String, Any>>()
 
         val friends = userFriends.subList(offset, offset + limit.coerceAtMost(userFriends.size))
-        return friends.map { mapOf(
-            "login" to it.friendLogin,
-            "addedAt" to DateFormatter.format(it.addedAt)
-        ) }
+        return friends.map {
+            mapOf(
+                "login" to it.friendLogin,
+                "addedAt" to DateFormatter.format(it.addedAt)
+            )
+        }
     }
 
 }

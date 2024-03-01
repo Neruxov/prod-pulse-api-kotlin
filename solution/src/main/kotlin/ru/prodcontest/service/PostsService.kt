@@ -13,7 +13,6 @@ import ru.prodcontest.data.post.request.CreatePostRequest
 import ru.prodcontest.data.user.model.User
 import ru.prodcontest.data.user.repo.UserRepository
 import ru.prodcontest.exception.type.StatusCodeException
-import ru.prodcontest.util.DateFormatter
 import java.util.*
 
 /**
@@ -54,7 +53,11 @@ class PostsService(
         val post = postRepository.findById(id)
             .orElseThrow { StatusCodeException(404, "Post not found") }
 
-        if (post.user != user && !post.user.isPublic && !friendRepository.existsByUserLoginAndFriendLogin(post.user.login, user.login))
+        if (post.user != user && !post.user.isPublic && !friendRepository.existsByUserLoginAndFriendLogin(
+                post.user.login,
+                user.login
+            )
+        )
             throw StatusCodeException(404, "This user's profile is private")
 
         return post.toMap()
@@ -64,7 +67,11 @@ class PostsService(
         var post = postRepository.findById(id)
             .orElseThrow { StatusCodeException(404, "Post not found") }
 
-        if (post.user != user && !post.user.isPublic && !friendRepository.existsByUserLoginAndFriendLogin(post.user.login, user.login))
+        if (post.user != user && !post.user.isPublic && !friendRepository.existsByUserLoginAndFriendLogin(
+                post.user.login,
+                user.login
+            )
+        )
             throw StatusCodeException(404, "This user's profile is private")
 
         val reaction = reactionRepository.findByPostIdAndUserId(id, user.id)

@@ -2,8 +2,7 @@ package ru.prodcontest.data.friend.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
-import ru.prodcontest.data.user.model.User
-import java.util.Date
+import java.util.*
 
 /**
  * @author <a href="https://github.com/Neruxov">Neruxov</a>

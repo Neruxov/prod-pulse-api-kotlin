@@ -2,11 +2,9 @@ package ru.prodcontest.data.post.model
 
 import jakarta.persistence.*
 import ru.prodcontest.data.post.enums.ReactionType
-import ru.prodcontest.data.post.repo.ReactionRepository
 import ru.prodcontest.data.user.model.User
 import ru.prodcontest.util.DateFormatter
-import java.util.Date
-import java.util.UUID
+import java.util.*
 
 @Entity
 @Table(name = "posts")

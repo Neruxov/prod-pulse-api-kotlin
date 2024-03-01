@@ -62,19 +62,26 @@ class AuthService(
             throw StatusCodeException(400, "Email must be less than 50 characters long and not be empty")
 
         if (!PasswordUtil.meetsRequirements(body.password))
-            throw StatusCodeException(400, "Password must be between 6 and 100 characters, contain at least one digit, one lowercase letter, and one uppercase letter.")
+            throw StatusCodeException(
+                400,
+                "Password must be between 6 and 100 characters, contain at least one digit, one lowercase letter, and one uppercase letter."
+            )
 
         if (!body.countryCode.matches(Regex("^[a-zA-Z]{2}\$")))
             throw StatusCodeException(400, "Country code must match [a-zA-Z]{2}")
 
         if (body.phone != null && (!body.phone.matches(Regex("^\\+\\d+\$")) || body.phone.length > 20 || body.phone.isEmpty()))
-            throw StatusCodeException(400, "Phone must match ^\\+\\d+\$, be less than 20 characters long and not be empty")
+            throw StatusCodeException(
+                400,
+                "Phone must match ^\\+\\d+\$, be less than 20 characters long and not be empty"
+            )
         if (body.image != null && (body.image.length > 200 || body.image.isEmpty()))
             throw StatusCodeException(400, "Image URL is too long or empty")
 
         if (userRepository.existsByLogin(body.login) ||
             userRepository.existsByEmail(body.email) ||
-            (body.phone != null && userRepository.existsByPhone(body.phone))) {
+            (body.phone != null && userRepository.existsByPhone(body.phone))
+        ) {
             throw StatusCodeException(409, "User with this registration information already exists")
         }
 

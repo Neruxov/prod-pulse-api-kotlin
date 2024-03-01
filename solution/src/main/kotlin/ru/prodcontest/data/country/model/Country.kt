@@ -4,10 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 
 @Entity
-@Table(name = "countries", uniqueConstraints = [
-    UniqueConstraint(columnNames = ["alpha2"]),
-    UniqueConstraint(columnNames = ["alpha3"])
-])
+@Table(
+    name = "countries", uniqueConstraints = [
+        UniqueConstraint(columnNames = ["alpha2"]),
+        UniqueConstraint(columnNames = ["alpha3"])
+    ]
+)
 data class Country(
 
     @Id
@@ -28,7 +30,7 @@ data class Country(
     @Column(name = "region", nullable = true)
     val region: String?,
 
-) {
+    ) {
 
     constructor() : this(0, "", "", "", "")
 

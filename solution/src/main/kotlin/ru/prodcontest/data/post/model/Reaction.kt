@@ -2,7 +2,7 @@ package ru.prodcontest.data.post.model
 
 import jakarta.persistence.*
 import ru.prodcontest.data.post.enums.ReactionType
-import java.util.UUID
+import java.util.*
 
 /**
  * @author <a href="https://github.com/Neruxov">Neruxov</a>

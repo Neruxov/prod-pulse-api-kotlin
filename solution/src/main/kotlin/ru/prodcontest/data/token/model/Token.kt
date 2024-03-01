@@ -2,7 +2,6 @@ package ru.prodcontest.data.token.model
 
 import jakarta.persistence.*
 import ru.prodcontest.data.token.enums.TokenType
-import ru.prodcontest.data.user.model.User
 
 @Entity
 @Table(name = "tokens")

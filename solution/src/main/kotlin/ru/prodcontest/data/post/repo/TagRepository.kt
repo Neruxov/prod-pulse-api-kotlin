@@ -6,5 +6,4 @@ import ru.prodcontest.data.post.model.Tag
 /**
  * @author <a href="https://github.com/Neruxov">Neruxov</a>
  */
-interface TagRepository : JpaRepository<Tag, Long> {
-}
+interface TagRepository : JpaRepository<Tag, Long>

@@ -1,7 +1,6 @@
 package ru.prodcontest.data.token.repo
 
 import org.springframework.data.jpa.repository.JpaRepository
-import org.springframework.data.jpa.repository.Query
 import ru.prodcontest.data.token.model.Token
 import java.util.*
 

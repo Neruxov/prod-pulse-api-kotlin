@@ -10,7 +10,6 @@ import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import ru.prodcontest.entrypoint.AuthEntryPoint
 import ru.prodcontest.filter.JwtAuthenticationFilter
-import kotlin.jvm.Throws
 
 /**
  * @author <a href="https://github.com/Neruxov">Neruxov</a>

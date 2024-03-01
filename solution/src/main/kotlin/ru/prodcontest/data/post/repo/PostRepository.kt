@@ -2,7 +2,7 @@ package ru.prodcontest.data.post.repo
 
 import org.springframework.data.jpa.repository.JpaRepository
 import ru.prodcontest.data.post.model.Post
-import java.util.UUID
+import java.util.*
 
 /**
  * @author <a href="https://github.com/Neruxov">Neruxov</a>

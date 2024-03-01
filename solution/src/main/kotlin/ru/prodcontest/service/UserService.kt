@@ -45,7 +45,10 @@ class UserService(
                 if (request.phone == user.phone) return@let
 
                 if (!it.matches(Regex("^\\+\\d+")) || it.length > 20 || it.isEmpty())
-                    throw StatusCodeException(400, "Phone must match ^\\+\\d+, be less than 20 characters long and not be empty")
+                    throw StatusCodeException(
+                        400,
+                        "Phone must match ^\\+\\d+, be less than 20 characters long and not be empty"
+                    )
 
                 if (userRepository.existsByPhone(it))
                     throw StatusCodeException(409, "User with this phone already exists")
@@ -69,7 +72,10 @@ class UserService(
 
     fun updatePassword(user: User, body: PasswordUpdateRequest): Any {
         if (!PasswordUtil.meetsRequirements(body.newPassword))
-            throw StatusCodeException(400, "Password must be between 6 and 100 characters, contain at least one digit, one lowercase letter, and one uppercase letter.")
+            throw StatusCodeException(
+                400,
+                "Password must be between 6 and 100 characters, contain at least one digit, one lowercase letter, and one uppercase letter."
+            )
 
         if (!passwordEncoder.matches(body.oldPassword, user.password))
             throw StatusCodeException(403, "Old password is incorrect")

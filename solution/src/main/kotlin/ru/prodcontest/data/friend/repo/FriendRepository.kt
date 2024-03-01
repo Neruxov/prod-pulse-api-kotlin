@@ -2,7 +2,7 @@ package ru.prodcontest.data.friend.repo
 
 import org.springframework.data.jpa.repository.JpaRepository
 import ru.prodcontest.data.friend.model.Friend
-import java.util.Optional
+import java.util.*
 
 /**
  * @author <a href="https://github.com/Neruxov">Neruxov</a>

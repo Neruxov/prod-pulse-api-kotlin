@@ -9,9 +9,9 @@ class PasswordUtil {
 
         fun meetsRequirements(password: String): Boolean {
             return password.length in 6..100 &&
-                   password.contains(Regex("[a-z]")) &&
-                   password.contains(Regex("[A-Z]")) &&
-                   password.contains(Regex("[0-9]"))
+                    password.contains(Regex("[a-z]")) &&
+                    password.contains(Regex("[A-Z]")) &&
+                    password.contains(Regex("[0-9]"))
         }
 
     }
