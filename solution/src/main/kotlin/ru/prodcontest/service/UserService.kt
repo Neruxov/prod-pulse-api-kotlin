@@ -24,17 +24,28 @@ class UserService(
     fun updateMyProfile(user: User, request: UpdateRequest): Any {
         user.apply {
             request.countryCode?.let {
+                if (request.countryCode == user.country.alpha2) return@let
+
+                if (!it.matches(Regex("[a-zA-Z]{2}")))
+                    throw StatusCodeException(400, "Alpha2 must match [a-zA-Z]{2}.")
+
                 val countryNew = countryRepository.findByAlpha2OrderByAlpha2(it)
                     .orElseThrow { StatusCodeException(404, "Country not found") }
 
                 country = countryNew
             }
 
-            request.isPublic?.let { isPublic = it }
+            request.isPublic?.let {
+                if (user.isPublic == it) return@let
+
+                isPublic = it
+            }
 
             request.phone?.let {
-                if (!it.matches(Regex("^\\+\\d+")))
-                    throw StatusCodeException(400, "Phone must match ^\\+\\d+")
+                if (request.phone == user.phone) return@let
+
+                if (!it.matches(Regex("^\\+\\d+")) || it.length > 20 || it.isEmpty())
+                    throw StatusCodeException(400, "Phone must match ^\\+\\d+, be less than 20 characters long and not be empty")
 
                 if (userRepository.existsByPhone(it))
                     throw StatusCodeException(409, "User with this phone already exists")
@@ -43,8 +54,10 @@ class UserService(
             }
 
             request.image?.let {
-                if (it.length > 200)
-                    throw StatusCodeException(400, "Image URL is too long")
+                if (request.image == user.image) return@let
+
+                if (it.length > 200 || it.isEmpty())
+                    throw StatusCodeException(400, "Image URL is too long or empty")
 
                 image = it
             }

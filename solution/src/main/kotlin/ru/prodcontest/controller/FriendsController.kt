@@ -32,7 +32,7 @@ class FriendsController(
         @RequestBody body: FriendRequest
     ) = friendService.removeFriend(user, body)
 
-    @GetMapping("/")
+    @GetMapping
     fun getFriends(
         @AuthenticationPrincipal user: User,
         @RequestParam limit: Int = 5,

@@ -20,10 +20,14 @@ class AuthController(
 ) {
 
     @PostMapping("/sign-in")
-    fun signIn(@RequestBody body: SignInRequest) = authService.signIn(body)
+    fun signIn(
+        @RequestBody body: SignInRequest
+    ) = authService.signIn(body)
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    fun register(@RequestBody request: RegisterRequest) = authService.register(request)
+    fun register(
+        @RequestBody request: RegisterRequest
+    ) = authService.register(request)
 
 }

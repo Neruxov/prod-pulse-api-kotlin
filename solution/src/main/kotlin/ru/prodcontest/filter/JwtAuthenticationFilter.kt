@@ -37,8 +37,12 @@ class JwtAuthenticationFilter(
             return filterChain.doFilter(request, response)
 
         val authHeader = request.getHeader("Authorization")
-        if (authHeader == null || !authHeader.startsWith("Bearer "))
-            return filterChain.doFilter(request, response)
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            response.status = 401
+            response.contentType = "application/json"
+            response.writer.write("{\"reason\": \"Token not found\"}")
+            return
+        }
 
         val jwt = authHeader.substring(7)
 
@@ -46,13 +50,11 @@ class JwtAuthenticationFilter(
         try {
             login = jwtService.extractUsername(jwt)
         } catch (e: ExpiredJwtException) {
-            println(e)
             response.status = 401
             response.contentType = "application/json"
             response.writer.write("{\"reason\": \"Token expired\"}")
             return
-        } catch (e: MalformedJwtException) {
-            println(e)
+        } catch (e: Exception) {
             response.status = 401
             response.contentType = "application/json"
             response.writer.write("{\"reason\": \"Invalid token\"}")

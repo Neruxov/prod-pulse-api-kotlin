@@ -11,6 +11,7 @@ import ru.prodcontest.data.post.repo.ReactionRepository
 import ru.prodcontest.data.post.repo.TagRepository
 import ru.prodcontest.data.post.request.CreatePostRequest
 import ru.prodcontest.data.user.model.User
+import ru.prodcontest.data.user.repo.UserRepository
 import ru.prodcontest.exception.type.StatusCodeException
 import ru.prodcontest.util.DateFormatter
 import java.util.*
@@ -23,15 +24,16 @@ class PostsService(
     val postRepository: PostRepository,
     val tagRepository: TagRepository,
     val reactionRepository: ReactionRepository,
-    val friendRepository: FriendRepository
+    val friendRepository: FriendRepository,
+    val userRepository: UserRepository
 ) {
 
     fun createPost(user: User, body: CreatePostRequest): Any {
-        if (body.content.length > 1000)
-            throw StatusCodeException(400, "Post length must be less than 1000")
+        if (body.content.length > 1000 || body.content.isEmpty())
+            throw StatusCodeException(400, "Post length must be less than 1000 and not be empty")
 
-        if (body.tags.any { it.length > 20 })
-            throw StatusCodeException(400, "Tag length must be less than 20")
+        if (body.tags.any { it.length > 20 || it.isEmpty() })
+            throw StatusCodeException(400, "Tag length must be less than 20 and not be empty")
 
         var post = Post(
             UUID.randomUUID(),
@@ -43,15 +45,9 @@ class PostsService(
         post = postRepository.save(post)
         body.tags.forEach { tagRepository.save(Tag(0, it, post)) }
 
-        return mapOf(
-            "id" to post.id,
-            "content" to post.content,
-            "author" to post.user.login,
-            "tags" to post.tags.map { it.name },
-            "createdAt" to DateFormatter.format(post.createdAt),
-            "likesCount" to 0,
-            "dislikesCount" to 0
-        )
+        return post.toMap().toMutableMap().apply {
+            put("tags", body.tags.map { it })
+        }
     }
 
     fun getPost(user: User, id: UUID): Any {
@@ -61,15 +57,7 @@ class PostsService(
         if (post.user != user && !post.user.isPublic && !friendRepository.existsByUserLoginAndFriendLogin(post.user.login, user.login))
             throw StatusCodeException(404, "This user's profile is private")
 
-        return mapOf(
-            "id" to post.id,
-            "content" to post.content,
-            "author" to post.user.login,
-            "tags" to post.tags.map { it.name },
-            "createdAt" to DateFormatter.format(post.createdAt),
-            "likesCount" to post.reactions.count { it.type == ReactionType.LIKE },
-            "dislikesCount" to post.reactions.count { it.type == ReactionType.DISLIKE }
-        )
+        return post.toMap()
     }
 
     fun reactToPost(user: User, id: UUID, reactionType: ReactionType): Any {
@@ -96,68 +84,37 @@ class PostsService(
             )
         }
 
-        return mapOf(
-            "id" to post.id,
-            "content" to post.content,
-            "author" to post.user.login,
-            "tags" to post.tags.map { it.name },
-            "createdAt" to DateFormatter.format(post.createdAt),
-            "likesCount" to post.reactions.count { it.type == ReactionType.LIKE },
-            "dislikesCount" to post.reactions.count { it.type == ReactionType.DISLIKE }
-        )
+        return post.toMap()
     }
 
     fun getMyFeed(user: User, limit: Int, offset: Int): Any {
-        val posts = postRepository.findByUserLoginOrderByCreatedAtDesc(user.login)
-        if (offset >= posts.size)
-            return emptyList<Map<String, Any>>()
-
-        if (limit < 0 || limit > 50)
-            throw StatusCodeException(400, "Limit must be between 0 and 50")
-
-        if (offset < 0)
-            throw StatusCodeException(400, "Offset must be greater than 0")
-
-        val feed = posts.subList(offset, offset + limit.coerceAtMost(posts.size))
-
-        return feed.map { mapOf(
-            "id" to it.id,
-            "content" to it.content,
-            "author" to it.user.login,
-            "tags" to it.tags.map { it.name },
-            "createdAt" to DateFormatter.format(it.createdAt),
-            "likesCount" to it.reactions.count { it.type == ReactionType.LIKE },
-            "dislikesCount" to it.reactions.count { it.type == ReactionType.DISLIKE }
-        ) }
+        return getFeedForUser(user, limit, offset).map { it.toMap() }
     }
 
     fun getUserFeed(user: User, login: String, limit: Int, offset: Int): Any {
         if (user.login == login) return getMyFeed(user, limit, offset)
 
-        val targetUser = friendRepository.findByUserLoginAndFriendLogin(login, user.login)
-            .orElseThrow { StatusCodeException(404, "User not found or has a private profile") }
-            .user
+        val targetUser = userRepository.findByLogin(login)
+            .orElseThrow { StatusCodeException(404, "User not found") }
 
-        val posts = postRepository.findByUserLoginOrderByCreatedAtDesc(targetUser.login)
+        if (!targetUser.isPublic && !friendRepository.existsByUserLoginAndFriendLogin(login, user.login))
+            throw StatusCodeException(404, "User has a private profile")
+
+        return getFeedForUser(targetUser, limit, offset).map { it.toMap() }
+    }
+
+    private fun getFeedForUser(user: User, limit: Int, offset: Int): List<Post> {
+        val posts = postRepository.findByUserLoginOrderByCreatedAtDesc(user.login)
         if (offset >= posts.size)
-            return emptyList<Map<String, Any>>()
+            return emptyList()
 
         if (limit < 0 || limit > 50)
             throw StatusCodeException(400, "Limit must be between 0 and 50")
 
         if (offset < 0)
-            throw StatusCodeException(400, "Offset must be greater than 0")
+            throw StatusCodeException(400, "Offset must be greater or equal to 0")
 
-        val feed = posts.subList(offset, offset + limit.coerceAtMost(posts.size))
-        return feed.map { mapOf(
-            "id" to it.id,
-            "content" to it.content,
-            "author" to it.user.login,
-            "tags" to it.tags.map { it.name },
-            "createdAt" to DateFormatter.format(it.createdAt),
-            "likesCount" to it.reactions.count { it.type == ReactionType.LIKE },
-            "dislikesCount" to it.reactions.count { it.type == ReactionType.DISLIKE }
-        ) }
+        return posts.subList(offset, (offset + limit).coerceAtMost(posts.size))
     }
 
 }

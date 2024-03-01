@@ -47,7 +47,7 @@ class FriendService(
             throw StatusCodeException(400, "Limit must be between 0 and 50")
 
         if (offset < 0)
-            throw StatusCodeException(400, "Offset must be greater than 0")
+            throw StatusCodeException(400, "Offset must be greater or equal to 0")
 
         val userFriends = friendRepository.findByUserLoginOrderByAddedAtDesc(user.login)
         if (offset >= userFriends.size)

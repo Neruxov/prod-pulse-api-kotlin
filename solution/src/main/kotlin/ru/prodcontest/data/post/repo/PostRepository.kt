@@ -1,6 +1,5 @@
 package ru.prodcontest.data.post.repo
 
-import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.jpa.repository.JpaRepository
 import ru.prodcontest.data.post.model.Post
 import java.util.UUID
@@ -10,7 +9,6 @@ import java.util.UUID
  */
 interface PostRepository : JpaRepository<Post, UUID> {
 
-    @Cacheable("posts")
     fun findByUserLoginOrderByCreatedAtDesc(userLogin: String): List<Post>
 
 }
