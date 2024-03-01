@@ -2,6 +2,7 @@ package ru.prodcontest.data.post.model
 
 import jakarta.persistence.*
 import ru.prodcontest.data.post.enums.ReactionType
+import ru.prodcontest.data.post.repo.ReactionRepository
 import ru.prodcontest.data.user.model.User
 import ru.prodcontest.util.DateFormatter
 import java.util.Date
@@ -19,7 +20,7 @@ data class Post(
     @Column(name = "content")
     val content: String,
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "postId", fetch = FetchType.LAZY)
     val tags: List<Tag>,
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -29,12 +30,12 @@ data class Post(
     @Column(name = "created_at")
     val createdAt: Date = Date(),
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "postId", fetch = FetchType.LAZY)
     val reactions: List<Reaction> = emptyList()
 
 ) {
 
-    constructor() : this(UUID.randomUUID(), "", emptyList(), User(), Date(), emptyList())
+    constructor() : this(UUID.randomUUID(), "", emptyList(), User(), Date())
 
     fun toMap() = mapOf(
         "id" to this.id,

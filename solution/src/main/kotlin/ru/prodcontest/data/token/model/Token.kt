@@ -23,12 +23,11 @@ data class Token(
     @Column(name = "revoked")
     var revoked: Boolean,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    val user: User,
+    @Column(name = "user_id")
+    val userId: Long
 
 ) {
 
-    constructor() : this(0, "", TokenType.BEARER, false, User())
+    constructor() : this(0, "", TokenType.BEARER, false, 0)
 
 }

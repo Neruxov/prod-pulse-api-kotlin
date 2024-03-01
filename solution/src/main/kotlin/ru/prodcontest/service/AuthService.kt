@@ -106,7 +106,7 @@ class AuthService(
     }
 
     fun saveUserToken(user: User, token: String) {
-        val newToken = Token(0, token, TokenType.BEARER, revoked = false, user = user)
+        val newToken = Token(0, token, TokenType.BEARER, revoked = false, userId = user.id)
         tokenRepository.save(newToken)
     }
 

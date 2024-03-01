@@ -2,7 +2,7 @@ package ru.prodcontest.data.post.model
 
 import jakarta.persistence.*
 import ru.prodcontest.data.post.enums.ReactionType
-import ru.prodcontest.data.user.model.User
+import java.util.UUID
 
 /**
  * @author <a href="https://github.com/Neruxov">Neruxov</a>
@@ -16,13 +16,11 @@ data class Reaction(
     @Column(name = "id")
     val id: Long,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id")
-    val post: Post,
+    @Column(name = "post_id")
+    val postId: UUID,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    val user: User,
+    @Column(name = "user_id")
+    val userId: Long,
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type")
@@ -30,6 +28,6 @@ data class Reaction(
 
 ) {
 
-    constructor() : this(0, Post(), User(), ReactionType.LIKE)
+    constructor() : this(0, UUID.randomUUID(), 0, ReactionType.LIKE)
 
 }

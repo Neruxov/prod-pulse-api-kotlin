@@ -43,7 +43,7 @@ class PostsService(
         )
 
         post = postRepository.save(post)
-        body.tags.forEach { tagRepository.save(Tag(0, it, post)) }
+        body.tags.forEach { tagRepository.save(Tag(0, it, post.id)) }
 
         return post.toMap().toMutableMap().apply {
             put("tags", body.tags.map { it })
@@ -73,7 +73,7 @@ class PostsService(
             r.type = reactionType
             reactionRepository.save(r)
         } else if (reaction.isEmpty) {
-            reactionRepository.save(Reaction(0, post, user, reactionType))
+            reactionRepository.save(Reaction(0, post.id, user.id, reactionType))
             post = Post(
                 post.id,
                 post.content,

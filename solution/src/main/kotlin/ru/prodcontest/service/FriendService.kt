@@ -20,14 +20,14 @@ class FriendService(
 
     fun addFriend(user: User, body: FriendRequest): Any {
         val userFriends = friendRepository.findByUserLoginOrderByAddedAtDesc(user.login)
-        if (user.login == body.login || userFriends.any { it.friend.login == body.login }) {
+        if (user.login == body.login || userFriends.any { it.friendLogin == body.login }) {
             return mapOf("status" to "ok")
         }
 
         val friendUser = userRepository.findByLogin(body.login)
             .orElseThrow { StatusCodeException(404, "User not found") }
 
-        val friend = Friend(0, user, friendUser)
+        val friend = Friend(0, user.login, body.login)
 
         friendRepository.save(friend)
         return mapOf("status" to "ok")
@@ -35,7 +35,7 @@ class FriendService(
 
     fun removeFriend(user: User, body: FriendRequest): Any {
         val userFriends = friendRepository.findByUserLoginOrderByAddedAtDesc(user.login)
-        val friend = userFriends.find { it.friend.login == body.login }
+        val friend = userFriends.find { it.friendLogin == body.login }
             ?: return mapOf("status" to "ok")
 
         friendRepository.delete(friend)
@@ -55,7 +55,7 @@ class FriendService(
 
         val friends = userFriends.subList(offset, offset + limit.coerceAtMost(userFriends.size))
         return friends.map { mapOf(
-            "login" to it.friend.login,
+            "login" to it.friendLogin,
             "addedAt" to DateFormatter.format(it.addedAt)
         ) }
     }

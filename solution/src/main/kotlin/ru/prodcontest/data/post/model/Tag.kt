@@ -2,6 +2,7 @@ package ru.prodcontest.data.post.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
+import java.util.UUID
 
 @Entity
 @Table(name = "tags")
@@ -16,13 +17,11 @@ data class Tag(
     @Column(name = "name")
     val name: String,
 
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id")
-    val post: Post
+    @Column(name = "post_id")
+    val postId: UUID
 
 ) {
 
-    constructor() : this(0, "", Post())
+    constructor() : this(0, "", UUID.randomUUID())
 
 }
