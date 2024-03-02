@@ -25,11 +25,11 @@ class PostsService(
 ) {
 
     fun createPost(user: User, body: CreatePostRequest): Any {
-        if (body.content.length > 1000 || body.content.isEmpty())
-            throw StatusCodeException(400, "Post length must be less than 1000 and not be empty")
+        if (body.content.length > 1000)
+            throw StatusCodeException(400, "Post length must be less than 1000")
 
-        if (body.tags.any { it.length > 20 || it.isEmpty() })
-            throw StatusCodeException(400, "Tag length must be less than 20 and not be empty")
+        if (body.tags.any { it.length > 20 })
+            throw StatusCodeException(400, "Tag length must be less than 20")
 
         var post = Post(
             UUID.randomUUID(),
@@ -39,7 +39,6 @@ class PostsService(
         )
 
         post = postRepository.save(post)
-//        body.tags.forEach { tagRepository.save(Tag(0, it, post.id)) }
 
         return post.toMap().toMutableMap().apply {
             put("tags", body.tags.map { it })

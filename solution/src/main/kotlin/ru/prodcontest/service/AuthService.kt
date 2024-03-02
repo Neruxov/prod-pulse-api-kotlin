@@ -49,7 +49,7 @@ class AuthService(
     }
 
     fun register(body: RegisterRequest): Any {
-        if (body.login.length > 30 || body.login.isEmpty())
+        if (body.login.length > 30)
             throw StatusCodeException(400, "Login must be less more than 30 characters long and not be empty")
 
         if (!body.login.matches(Regex("^[a-zA-Z0-9-]+\$")))
@@ -67,10 +67,10 @@ class AuthService(
         if (!body.countryCode.matches(Regex("^[a-zA-Z]{2}\$")))
             throw StatusCodeException(400, "Country code must match [a-zA-Z]{2}")
 
-        if (body.phone != null && (!body.phone.matches(Regex("^\\+\\d+\$")) || body.phone.length > 20 || body.phone.isEmpty()))
+        if (body.phone != null && (!body.phone.matches(Regex("^\\+\\d+\$")) || body.phone.length > 20))
             throw StatusCodeException(
                 400,
-                "Phone must match ^\\+\\d+\$, be less than 20 characters long and not be empty"
+                "Phone must match ^\\+\\d+\$ and be less than 20 characters long"
             )
 
         if (body.image != null && (body.image.length > 200 || body.image.isEmpty()))
