@@ -12,7 +12,7 @@ interface PostRepository : JpaRepository<Post, UUID> {
 
     @Query(
         "select p from Post p " +
-                "where p.user.login = :login " +
+        "where p.user.login = :login " +
         "order by p.createdAt desc " +
         "limit :limit offset :offset"
     )

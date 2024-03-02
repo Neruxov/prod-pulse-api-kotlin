@@ -49,11 +49,7 @@ class FriendService(
         if (offset < 0)
             throw StatusCodeException(400, "Offset must be greater or equal to 0")
 
-        val userFriends = friendRepository.findByUserLoginOrderByAddedAtDesc(user.login)
-        if (offset >= userFriends.size)
-            return emptyList<Map<String, Any>>()
-
-        val friends = userFriends.subList(offset, offset + limit.coerceAtMost(userFriends.size))
+        val friends = friendRepository.findByUserLoginOrderByAddedAtDescPaged(user.login, limit, offset)
         return friends.map {
             mapOf(
                 "login" to it.friendLogin,
