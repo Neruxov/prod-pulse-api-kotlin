@@ -19,8 +19,8 @@ data class Reaction(
     @Column(name = "post_id")
     val postId: UUID,
 
-    @Column(name = "user_id")
-    val userId: Long,
+    @Column(name = "user_login")
+    val userLogin: String,
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type")
@@ -28,6 +28,6 @@ data class Reaction(
 
 ) {
 
-    constructor() : this(0, UUID.randomUUID(), 0, ReactionType.LIKE)
+    constructor() : this(0, UUID.randomUUID(), "", ReactionType.LIKE)
 
 }

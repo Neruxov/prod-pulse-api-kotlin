@@ -10,7 +10,7 @@ import java.util.*
  */
 interface ReactionRepository : JpaRepository<Reaction, Long> {
 
-    fun findByPostIdAndUserId(postId: UUID, userId: Long): Optional<Reaction>
+    fun findByPostIdAndUserLogin(postId: UUID, userLogin: String): Optional<Reaction>
 
     fun countByPostIdAndType(postId: UUID, type: ReactionType): Int
 

@@ -9,6 +9,7 @@ import ru.prodcontest.data.user.request.PasswordUpdateRequest
 import ru.prodcontest.data.user.request.UpdateRequest
 import ru.prodcontest.exception.type.StatusCodeException
 import ru.prodcontest.util.PasswordUtil
+import java.util.*
 
 /**
  * @author <a href="https://github.com/Neruxov">Neruxov</a>
@@ -24,15 +25,15 @@ class UserService(
     fun updateMyProfile(user: User, request: UpdateRequest): Any {
         user.apply {
             request.countryCode?.let {
-                if (request.countryCode == user.country.alpha2) return@let
+                if (request.countryCode == user.countryCode) return@let
 
                 if (!it.matches(Regex("[a-zA-Z]{2}")))
                     throw StatusCodeException(400, "Alpha2 must match [a-zA-Z]{2}.")
 
-                val countryNew = countryRepository.findByAlpha2IgnoreCase(it)
-                    .orElseThrow { StatusCodeException(404, "Country not found") }
+                if (!countryRepository.existsByAlpha2(it))
+                    throw StatusCodeException(400, "Country with this alpha2 does not exist")
 
-                country = countryNew
+                countryCode = it
             }
 
             request.isPublic?.let {
@@ -80,8 +81,8 @@ class UserService(
         if (!passwordEncoder.matches(body.oldPassword, user.password))
             throw StatusCodeException(403, "Old password is incorrect")
 
-        authService.revokeUserTokens(user)
         user._password = passwordEncoder.encode(body.newPassword)
+        user.lastPasswordChange = Date()
 
         userRepository.save(user)
         return mapOf(

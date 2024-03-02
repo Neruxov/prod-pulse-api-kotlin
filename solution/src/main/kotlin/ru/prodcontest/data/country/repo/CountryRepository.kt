@@ -19,4 +19,7 @@ interface CountryRepository : JpaRepository<Country, Long> {
     @Cacheable("countries")
     fun findAllByOrderByAlpha2(): List<Country>
 
+    @Cacheable("countries")
+    fun existsByAlpha2(alpha2: String): Boolean
+
 }

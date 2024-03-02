@@ -12,9 +12,11 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 import ru.prodcontest.config.SecurityConfig
-import ru.prodcontest.data.token.repo.TokenRepository
+import ru.prodcontest.data.user.repo.UserRepository
 import ru.prodcontest.service.JwtService
 import java.io.IOException
+import java.util.Date
+import kotlin.jvm.optionals.getOrElse
 
 /**
  * @author <a href="https://github.com/Neruxov">Neruxov</a>
@@ -23,7 +25,7 @@ import java.io.IOException
 class JwtAuthenticationFilter(
     val jwtService: JwtService,
     val userDetailsService: UserDetailsService,
-    val tokenRepository: TokenRepository
+    val userRepository: UserRepository
 ) : OncePerRequestFilter() {
 
     @Throws(ServletException::class, IOException::class)
@@ -46,8 +48,11 @@ class JwtAuthenticationFilter(
         val jwt = authHeader.substring(7)
 
         val login: String?
+        val issuedAt: Date?
+
         try {
             login = jwtService.extractUsername(jwt)
+            issuedAt = jwtService.extractClaim(jwt) { claim -> return@extractClaim claim.issuedAt }
         } catch (e: ExpiredJwtException) {
             response.status = 401
             response.contentType = "application/json"
@@ -60,14 +65,19 @@ class JwtAuthenticationFilter(
             return
         }
 
-        if (login != null && SecurityContextHolder.getContext().authentication == null) {
-            val userDetails = userDetailsService.loadUserByUsername(login)
-            val isTokenValid = tokenRepository.findByToken(jwt)
-                .map { t -> !t.revoked }
-                .orElse(false)
+        if (login != null && issuedAt != null && SecurityContextHolder.getContext().authentication == null) {
+            val user = userRepository.findByLogin(login)
+                .getOrElse {
+                    response.status = 401
+                    response.contentType = "application/json"
+                    response.writer.write("{\"reason\": \"Invalid token\"}")
+                    return
+                }
 
-            if (jwtService.isTokenValid(jwt, userDetails) && isTokenValid) {
-                val authToken = UsernamePasswordAuthenticationToken(userDetails, null, userDetails.authorities)
+            val isTokenValid = issuedAt.after(user.lastPasswordChange)
+
+            if (jwtService.isTokenValid(jwt, user) && isTokenValid) {
+                val authToken = UsernamePasswordAuthenticationToken(user, null, user.authorities)
                 authToken.details = WebAuthenticationDetailsSource().buildDetails(request)
                 SecurityContextHolder.getContext().authentication = authToken
             } else {

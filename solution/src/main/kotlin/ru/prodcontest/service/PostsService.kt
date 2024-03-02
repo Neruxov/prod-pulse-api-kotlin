@@ -74,20 +74,21 @@ class PostsService(
         )
             throw StatusCodeException(404, "This user's profile is private")
 
-        val reaction = reactionRepository.findByPostIdAndUserId(id, user.id)
+        val reaction = reactionRepository.findByPostIdAndUserLogin(id, user.login)
         if (reaction.isPresent && reaction.get().type != reactionType) {
             val r = reaction.get()
             r.type = reactionType
             reactionRepository.save(r)
         } else if (reaction.isEmpty) {
-            reactionRepository.save(Reaction(0, post.id, user.id, reactionType))
+            reactionRepository.save(Reaction(0, post.id, user.login, reactionType))
             post = Post(
                 post.id,
                 post.content,
                 post.tags,
                 post.user,
                 post.createdAt,
-                post.reactions
+                post.likesCount + if (reactionType == ReactionType.LIKE) 1 else 0,
+                post.dislikesCount + if (reactionType == ReactionType.DISLIKE) 1 else 0
             )
         }
 
@@ -111,17 +112,14 @@ class PostsService(
     }
 
     private fun getFeedForUser(user: User, limit: Int, offset: Int): List<Post> {
-        val posts = postRepository.findByUserLoginOrderByCreatedAtDesc(user.login)
-        if (offset >= posts.size)
-            return emptyList()
-
         if (limit < 0 || limit > 50)
             throw StatusCodeException(400, "Limit must be between 0 and 50")
 
         if (offset < 0)
             throw StatusCodeException(400, "Offset must be greater or equal to 0")
 
-        return posts.subList(offset, (offset + limit).coerceAtMost(posts.size))
+        val posts = postRepository.findByUserLoginOrderByCreatedAtDescPaged(user.login, limit, offset)
+        return posts
     }
 
 }

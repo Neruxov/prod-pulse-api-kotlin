@@ -2,12 +2,11 @@ package ru.prodcontest.service
 
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.AuthenticationException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import ru.prodcontest.data.country.repo.CountryRepository
-import ru.prodcontest.data.token.enums.TokenType
-import ru.prodcontest.data.token.model.Token
-import ru.prodcontest.data.token.repo.TokenRepository
 import ru.prodcontest.data.user.model.User
 import ru.prodcontest.data.user.repo.UserRepository
 import ru.prodcontest.data.user.request.RegisterRequest
@@ -22,7 +21,6 @@ import ru.prodcontest.util.PasswordUtil
  */
 @Service
 class AuthService(
-    val tokenRepository: TokenRepository,
     val userRepository: UserRepository,
     val jwtService: JwtService,
     val countryRepository: CountryRepository,
@@ -37,21 +35,16 @@ class AuthService(
         if (body.login.length > 30 || body.login.isEmpty())
             throw StatusCodeException(400, "Login must be less more than 30 characters long and not be empty")
 
-        val user = userRepository.findByLogin(body.login)
-            .orElseThrow { StatusCodeException(401, "User not found") }
-
-        if (!passwordEncoder.matches(body.password, user.password))
+        val auth: Authentication
+        try {
+            auth = authenticationManager.authenticate(
+                UsernamePasswordAuthenticationToken(body.login, body.password)
+            )
+        } catch (e: AuthenticationException) {
             throw StatusCodeException(401, "Password is incorrect")
+        }
 
-        authenticationManager.authenticate(
-            UsernamePasswordAuthenticationToken(body.login, body.password)
-        )
-
-        val jwtToken = jwtService.generateToken(user)
-
-        revokeUserTokens(user)
-        saveUserToken(user, jwtToken)
-
+        val jwtToken = jwtService.generateToken(auth.principal as User)
         return SignInResponse(jwtToken)
     }
 
@@ -83,20 +76,22 @@ class AuthService(
         if (body.image != null && (body.image.length > 200 || body.image.isEmpty()))
             throw StatusCodeException(400, "Image URL is too long or empty")
 
-        if (userRepository.existsByLogin(body.login) ||
-            userRepository.existsByEmail(body.email) ||
-            (body.phone != null && userRepository.existsByPhone(body.phone))
-        ) {
+        if (userRepository.existsByLoginOrPhoneOrEmail(
+            body.login,
+            body.phone,
+            body.email
+        )) {
             throw StatusCodeException(409, "User with this registration information already exists")
         }
 
+        if (!countryRepository.existsByAlpha2(body.countryCode))
+            throw StatusCodeException(400, "Invalid country code")
+
         val user = User(
-            0,
             body.login,
             body.email,
             passwordEncoder.encode(body.password),
-            countryRepository.findByAlpha2IgnoreCase(body.countryCode)
-                .orElseThrow { StatusCodeException(400, "Invalid country code") },
+            body.countryCode,
             body.isPublic,
             body.phone,
             body.image,
@@ -107,19 +102,6 @@ class AuthService(
         return RegisterResponse(
             savedUser.toMap()
         )
-    }
-
-    fun revokeUserTokens(user: User) {
-        val validTokens = tokenRepository.findByUserIdAndRevokedFalse(user.id)
-        if (validTokens.isNotEmpty()) {
-            validTokens.forEach { it.revoked = true }
-            tokenRepository.saveAll(validTokens)
-        }
-    }
-
-    fun saveUserToken(user: User, token: String) {
-        val newToken = Token(0, token, TokenType.BEARER, revoked = false, userId = user.id)
-        tokenRepository.save(newToken)
     }
 
 }
