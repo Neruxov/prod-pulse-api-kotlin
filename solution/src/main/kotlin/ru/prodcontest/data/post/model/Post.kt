@@ -15,7 +15,7 @@ data class Post(
     @GeneratedValue(generator = "UUID")
     val id: UUID,
 
-    @Column(name = "content")
+    @Column(name = "content", length = 1000)
     val content: String,
 
     @OneToMany(mappedBy = "postId", fetch = FetchType.LAZY)
