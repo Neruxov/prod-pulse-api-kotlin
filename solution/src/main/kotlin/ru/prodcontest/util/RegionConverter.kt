@@ -1,4 +1,4 @@
-package ru.prodcontest.converter
+package ru.prodcontest.util
 
 import org.springframework.core.convert.converter.Converter
 import org.springframework.stereotype.Component

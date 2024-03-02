@@ -6,7 +6,7 @@ import java.util.*
 /**
  * @author <a href="https://github.com/Neruxov">Neruxov</a>
  */
-class DateFormatter {
+class DateUtil {
 
     companion object {
 

@@ -2,7 +2,7 @@ package ru.prodcontest.data.post.model
 
 import jakarta.persistence.*
 import ru.prodcontest.data.user.model.User
-import ru.prodcontest.util.DateFormatter
+import ru.prodcontest.util.DateUtil
 import java.util.*
 
 @Entity
@@ -42,7 +42,7 @@ data class Post(
         "content" to this.content,
         "author" to this.user.login,
         "tags" to this.tags.map { it },
-        "createdAt" to DateFormatter.format(this.createdAt),
+        "createdAt" to DateUtil.format(this.createdAt),
         "likesCount" to likesCount,
         "dislikesCount" to dislikesCount
     )

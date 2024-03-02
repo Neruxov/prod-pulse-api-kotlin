@@ -7,7 +7,7 @@ import ru.prodcontest.data.friend.request.FriendRequest
 import ru.prodcontest.data.user.model.User
 import ru.prodcontest.data.user.repo.UserRepository
 import ru.prodcontest.exception.type.StatusCodeException
-import ru.prodcontest.util.DateFormatter
+import ru.prodcontest.util.DateUtil
 
 /**
  * @author <a href="https://github.com/Neruxov">Neruxov</a>
@@ -57,7 +57,7 @@ class FriendService(
         return friends.map {
             mapOf(
                 "login" to it.friendLogin,
-                "addedAt" to DateFormatter.format(it.addedAt)
+                "addedAt" to DateUtil.format(it.addedAt)
             )
         }
     }
