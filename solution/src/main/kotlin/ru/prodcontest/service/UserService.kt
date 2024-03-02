@@ -45,10 +45,10 @@ class UserService(
             request.phone?.let {
                 if (request.phone == user.phone) return@let
 
-                if (!it.matches(Regex("^\\+\\d+")) || it.length > 20 || it.isEmpty())
+                if (!it.matches(Regex("^\\+\\d+")) || it.length > 20)
                     throw StatusCodeException(
                         400,
-                        "Phone must match ^\\+\\d+, be less than 20 characters long and not be empty"
+                        "Phone must match ^\\+\\d+ and be less than 20 characters long"
                     )
 
                 if (userRepository.existsByPhone(it))
