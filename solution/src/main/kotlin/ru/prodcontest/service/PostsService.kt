@@ -5,10 +5,8 @@ import ru.prodcontest.data.friend.repo.FriendRepository
 import ru.prodcontest.data.post.enums.ReactionType
 import ru.prodcontest.data.post.model.Post
 import ru.prodcontest.data.post.model.Reaction
-import ru.prodcontest.data.post.model.Tag
 import ru.prodcontest.data.post.repo.PostRepository
 import ru.prodcontest.data.post.repo.ReactionRepository
-import ru.prodcontest.data.post.repo.TagRepository
 import ru.prodcontest.data.post.request.CreatePostRequest
 import ru.prodcontest.data.user.model.User
 import ru.prodcontest.data.user.repo.UserRepository
@@ -21,7 +19,6 @@ import java.util.*
 @Service
 class PostsService(
     val postRepository: PostRepository,
-    val tagRepository: TagRepository,
     val reactionRepository: ReactionRepository,
     val friendRepository: FriendRepository,
     val userRepository: UserRepository
@@ -37,12 +34,12 @@ class PostsService(
         var post = Post(
             UUID.randomUUID(),
             body.content,
-            mutableListOf(),
+            body.tags.toTypedArray(),
             user
         )
 
         post = postRepository.save(post)
-        body.tags.forEach { tagRepository.save(Tag(0, it, post.id)) }
+//        body.tags.forEach { tagRepository.save(Tag(0, it, post.id)) }
 
         return post.toMap().toMutableMap().apply {
             put("tags", body.tags.map { it })
@@ -77,10 +74,17 @@ class PostsService(
         val reaction = reactionRepository.findByPostIdAndUserLogin(id, user.login)
         if (reaction.isPresent && reaction.get().type != reactionType) {
             val r = reaction.get()
+
             r.type = reactionType
+
+            post.likesCount += if (reactionType == ReactionType.LIKE) 1 else -1
+            post.dislikesCount += if (reactionType == ReactionType.LIKE) -1 else 1
+
             reactionRepository.save(r)
+            post = postRepository.save(post)
         } else if (reaction.isEmpty) {
             reactionRepository.save(Reaction(0, post.id, user.login, reactionType))
+
             post = Post(
                 post.id,
                 post.content,
@@ -90,6 +94,8 @@ class PostsService(
                 post.likesCount + if (reactionType == ReactionType.LIKE) 1 else 0,
                 post.dislikesCount + if (reactionType == ReactionType.DISLIKE) 1 else 0
             )
+
+            post = postRepository.save(post)
         }
 
         return post.toMap()
