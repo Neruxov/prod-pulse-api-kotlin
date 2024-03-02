@@ -42,7 +42,7 @@ data class User(
     @Column(name = "last_password_change")
     var lastPasswordChange: Date = Date(),
 
-    ) : UserDetails {
+) : UserDetails {
 
     constructor() : this("", "", "", "", false, "", "")
 
