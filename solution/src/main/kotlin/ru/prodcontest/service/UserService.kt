@@ -29,7 +29,7 @@ class UserService(
                 if (!it.matches(Regex("[a-zA-Z]{2}")))
                     throw StatusCodeException(400, "Alpha2 must match [a-zA-Z]{2}.")
 
-                val countryNew = countryRepository.findByAlpha2OrderByAlpha2(it)
+                val countryNew = countryRepository.findByAlpha2IgnoreCase(it)
                     .orElseThrow { StatusCodeException(404, "Country not found") }
 
                 country = countryNew
