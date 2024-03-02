@@ -26,7 +26,7 @@ class CountryService(
         if (!alpha2.matches(Regex("[a-zA-Z]{2}")))
             throw StatusCodeException(400, "Alpha2 must match [a-zA-Z]{2}.")
 
-        return countryRepository.findByAlpha2OrderByAlpha2(alpha2)
+        return countryRepository.findByAlpha2IgnoreCase(alpha2)
             .orElseThrow { StatusCodeException(404, "Country not found") }
     }
 

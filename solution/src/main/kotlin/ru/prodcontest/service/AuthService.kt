@@ -31,6 +31,9 @@ class AuthService(
 ) {
 
     fun signIn(body: SignInRequest): Any {
+        if (body.login == "my")
+            throw StatusCodeException(400, "Login 'my' is not allowed")
+
         if (body.login.length > 30 || body.login.isEmpty())
             throw StatusCodeException(400, "Login must be less more than 30 characters long and not be empty")
 
@@ -55,6 +58,7 @@ class AuthService(
     fun register(body: RegisterRequest): Any {
         if (body.login.length > 30 || body.login.isEmpty())
             throw StatusCodeException(400, "Login must be less more than 30 characters long and not be empty")
+
         if (!body.login.matches(Regex("^[a-zA-Z0-9-]+\$")))
             throw StatusCodeException(400, "Login must match [a-zA-Z0-9-]+")
 
@@ -75,6 +79,7 @@ class AuthService(
                 400,
                 "Phone must match ^\\+\\d+\$, be less than 20 characters long and not be empty"
             )
+
         if (body.image != null && (body.image.length > 200 || body.image.isEmpty()))
             throw StatusCodeException(400, "Image URL is too long or empty")
 
@@ -90,7 +95,7 @@ class AuthService(
             body.login,
             body.email,
             passwordEncoder.encode(body.password),
-            countryRepository.findByAlpha2OrderByAlpha2(body.countryCode)
+            countryRepository.findByAlpha2IgnoreCase(body.countryCode)
                 .orElseThrow { StatusCodeException(400, "Invalid country code") },
             body.isPublic,
             body.phone,
