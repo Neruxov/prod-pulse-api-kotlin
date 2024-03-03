@@ -30,7 +30,7 @@ data class Country(
     @Column(name = "region", nullable = true)
     val region: String?,
 
-    ) {
+) {
 
     constructor() : this(0, "", "", "", "")
 

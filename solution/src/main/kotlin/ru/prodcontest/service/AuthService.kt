@@ -29,12 +29,6 @@ class AuthService(
 ) {
 
     fun signIn(body: SignInRequest): Any {
-        if (body.login == "my")
-            throw StatusCodeException(400, "Login 'my' is not allowed")
-
-        if (body.login.length > 30 || body.login.isEmpty())
-            throw StatusCodeException(400, "Login must be less more than 30 characters long and not be empty")
-
         val auth: Authentication
         try {
             auth = authenticationManager.authenticate(
@@ -50,7 +44,10 @@ class AuthService(
 
     fun register(body: RegisterRequest): Any {
         if (body.login.length > 30)
-            throw StatusCodeException(400, "Login must be less more than 30 characters long and not be empty")
+            throw StatusCodeException(400, "Login must be less than 30 characters long and not be empty")
+
+        if (body.equals("my"))
+            throw StatusCodeException(400, "Login cannot be 'my'")
 
         if (!body.login.matches(Regex("^[a-zA-Z0-9-]+\$")))
             throw StatusCodeException(400, "Login must match [a-zA-Z0-9-]+")
