@@ -40,6 +40,9 @@ class FriendService(
         if (body.login.isEmpty())
             throw StatusCodeException(400, "Login must not be empty")
 
+        if (user.login == body.login)
+            return mapOf("status" to "ok")
+
         val userFriends = friendRepository.findByUserLoginOrderByAddedAtDesc(user.login)
         val friend = userFriends.find { it.friendLogin == body.login }
             ?: return mapOf("status" to "ok")
