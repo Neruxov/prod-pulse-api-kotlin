@@ -40,7 +40,7 @@ data class User(
     val role: Role = Role.USER,
 
     @Column(name = "last_password_change")
-    var lastPasswordChange: Date = Date(),
+    var lastPasswordChange: Date = Date(0),
 
 ) : UserDetails {
 
