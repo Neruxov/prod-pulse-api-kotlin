@@ -10,13 +10,10 @@ import java.util.*
  */
 interface CountryRepository : JpaRepository<Country, Long> {
 
-    @Cacheable("countries")
     fun findByAlpha2IgnoreCase(alpha2: String): Optional<Country>
 
-    @Cacheable("countries")
     fun findByRegionInIgnoreCaseOrderByAlpha2(region: List<String>): List<Country>
 
-    @Cacheable("countries")
     fun findAllByOrderByAlpha2(): List<Country>
 
     fun existsByAlpha2(alpha2: String): Boolean
