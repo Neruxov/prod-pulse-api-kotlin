@@ -1,6 +1,7 @@
-package ru.prodcontest.util
+package ru.prodcontest.util.deserializer
 
 import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.core.JsonToken
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonDeserializer
 
@@ -11,9 +12,12 @@ class BooleanDeserializer : JsonDeserializer<Boolean>() {
 
     override fun deserialize(p0: JsonParser?, p1: DeserializationContext?): Boolean {
         val jsonToken = p0?.currentToken
+        println("jsonToken = $jsonToken")
+        println(p1.toString())
         return when (jsonToken) {
-            null -> throw IllegalArgumentException("Invalid token")
-            else -> p0.booleanValue
+            JsonToken.VALUE_TRUE -> true
+            JsonToken.VALUE_FALSE -> false
+            else -> throw IllegalArgumentException("Invalid body")
         }
     }
 

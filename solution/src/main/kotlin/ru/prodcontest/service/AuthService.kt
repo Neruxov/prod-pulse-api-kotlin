@@ -38,7 +38,7 @@ class AuthService(
                 UsernamePasswordAuthenticationToken(body.login, body.password)
             )
         } catch (e: AuthenticationException) {
-            throw StatusCodeException(401, "Password is incorrect")
+            throw StatusCodeException(401, "User or password is incorrect")
         }
 
         val jwtToken = jwtService.generateToken(auth.principal as User)

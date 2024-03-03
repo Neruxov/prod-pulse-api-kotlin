@@ -1,4 +1,4 @@
-package ru.prodcontest.util
+package ru.prodcontest.util.entrypoint
 
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
