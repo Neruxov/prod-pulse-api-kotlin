@@ -29,6 +29,9 @@ class AuthService(
 ) {
 
     fun signIn(body: SignInRequest): Any {
+        if (body.login.isEmpty() || body.password.isEmpty())
+            throw StatusCodeException(400, "Login and password must not be empty")
+
         val auth: Authentication
         try {
             auth = authenticationManager.authenticate(

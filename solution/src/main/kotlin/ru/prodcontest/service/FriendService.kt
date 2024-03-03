@@ -19,6 +19,9 @@ class FriendService(
 ) {
 
     fun addFriend(user: User, body: FriendRequest): Any {
+        if (body.login.isEmpty())
+            throw StatusCodeException(400, "Login must not be empty")
+
         val userFriends = friendRepository.findByUserLoginOrderByAddedAtDesc(user.login)
         if (user.login == body.login || userFriends.any { it.friendLogin == body.login }) {
             return mapOf("status" to "ok")
@@ -34,6 +37,9 @@ class FriendService(
     }
 
     fun removeFriend(user: User, body: FriendRequest): Any {
+        if (body.login.isEmpty())
+            throw StatusCodeException(400, "Login must not be empty")
+
         val userFriends = friendRepository.findByUserLoginOrderByAddedAtDesc(user.login)
         val friend = userFriends.find { it.friendLogin == body.login }
             ?: return mapOf("status" to "ok")

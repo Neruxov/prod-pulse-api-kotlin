@@ -72,6 +72,9 @@ class UserService(
     }
 
     fun updatePassword(user: User, body: PasswordUpdateRequest): Any {
+        if (body.newPassword.isEmpty() || body.oldPassword.isEmpty())
+            throw StatusCodeException(400, "Passwords must not be empty")
+
         if (!PasswordUtil.meetsRequirements(body.newPassword))
             throw StatusCodeException(
                 400,
