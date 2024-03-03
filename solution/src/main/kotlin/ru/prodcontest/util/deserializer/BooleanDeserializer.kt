@@ -12,8 +12,6 @@ class BooleanDeserializer : JsonDeserializer<Boolean>() {
 
     override fun deserialize(p0: JsonParser?, p1: DeserializationContext?): Boolean {
         val jsonToken = p0?.currentToken
-        println("jsonToken = $jsonToken")
-        println(p1.toString())
         return when (jsonToken) {
             JsonToken.VALUE_TRUE -> true
             JsonToken.VALUE_FALSE -> false

@@ -46,10 +46,10 @@ class AuthService(
     }
 
     fun register(body: RegisterRequest): Any {
-        if (body.login.length > 30)
+        if (body.login.length > 30 || body.login.isEmpty())
             throw StatusCodeException(400, "Login must be less than 30 characters long and not be empty")
 
-        if (body.equals("my"))
+        if (body.login == "my")
             throw StatusCodeException(400, "Login cannot be 'my'")
 
         if (!body.login.matches(Regex("^[a-zA-Z0-9-]+\$")))
