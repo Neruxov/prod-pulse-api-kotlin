@@ -76,7 +76,7 @@ class AuthService(
         if (body.image != null && (body.image.length > 200 || body.image.isEmpty()))
             throw StatusCodeException(400, "Image URL is too long or empty")
 
-        if (userRepository.existsByLoginIgnoreCaseOrPhoneOrEmail(
+        if (userRepository.existsByLoginOrPhoneOrEmail(
             body.login,
             body.phone,
             body.email

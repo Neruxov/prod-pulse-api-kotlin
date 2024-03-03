@@ -11,7 +11,7 @@ interface UserRepository : JpaRepository<User, Long> {
 
     fun findByLogin(login: String): Optional<User>
 
-    fun existsByLoginIgnoreCaseOrPhoneOrEmail(login: String, phone: String?, email: String): Boolean
+    fun existsByLoginOrPhoneOrEmail(login: String, phone: String?, email: String): Boolean
 
     fun existsByPhone(phone: String): Boolean
 
