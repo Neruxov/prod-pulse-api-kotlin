@@ -25,6 +25,10 @@ class AuthEntryPoint : AuthenticationEntryPoint {
             404 -> "Endpoint not found"
             405 -> "Method not allowed"
             415 -> "Unsupported media type"
+            500 -> {
+                response.status = 400
+                "Invalid body"
+            }
 
             else -> return
         }
