@@ -76,11 +76,10 @@ class AuthService(
         if (body.image != null && (body.image.length > 200 || body.image.isEmpty()))
             throw StatusCodeException(400, "Image URL is too long or empty")
 
-        if (userRepository.existsByLoginOrPhoneOrEmail(
+        if (userRepository.existsByLoginOrEmail(
             body.login,
-            body.phone,
             body.email
-        )) {
+        ) || (body.phone != null && userRepository.existsByPhone(body.phone))) {
             throw StatusCodeException(409, "User with this registration information already exists")
         }
 
